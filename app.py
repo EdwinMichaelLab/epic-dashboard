@@ -40,17 +40,33 @@ def main() -> None:
     st.sidebar.header("Filters")
     selected_units = st.sidebar.slider(
         "tUNITS",
-        min_value=min(data["tUNITS"]),
-        max_value=max(data["tUNITS"]),
+        min_value=min(data["tUNITS"]),  # type: ignore
+        max_value=max(data["tUNITS"]),  # type: ignore
         value=(min(data["tUNITS"]), max(data["tUNITS"])),
-    )
-    selected_building_types = st.sidebar.multiselect(
-        "Building Type",
-        data["building_type"].unique(),
-        default=data["building_type"].unique(),
     )
     selected_zipcode = st.sidebar.text_input("Zipcode", "")
     selected_vacant = st.sidebar.selectbox("Vacant", ["All", "Vacant", "Not Vacant"])
+
+    # Main page
+
+    st.write(
+        """
+        # EPIC: Epidemiological Predictor for Interactive Cities
+        
+        Welcome to the EPIC app! This app allows you to explore the digital twin of any city in the United States.
+        Use the field below to select the buildings you want to explore.
+        The map will update automatically.
+        You can also use the sidebar to filter the buildings by number of units, zipcode, and vacancy.
+        """
+    )
+
+    st.write("## Building Selection")
+
+    selected_building_types = st.multiselect(
+        "Choose building types",
+        data["building_type"].unique(),
+        default=data["building_type"].unique(),
+    )
 
     # Apply filters to the DataFrame
     filtered = data[
@@ -64,8 +80,37 @@ def main() -> None:
         )
     ]
 
+    # Proportion of building types
+
+    st.header("Building Type Proportions")
+
+    filtered_counts = filtered["building_type"].value_counts()
+    fig = px.pie(
+        filtered_counts,
+        values=filtered_counts,
+        names=filtered_counts.index,
+        title="Building Type Proportions",
+    )
+
+    st.plotly_chart(fig, use_container_width=False)
+
+    unit_distribution = filtered["tUNITS"].value_counts().sort_index()
+
+    st.header("Number of Units Distribution")
+
+    fig = px.pie(
+        unit_distribution,
+        values=unit_distribution,
+        names=unit_distribution.index,
+        title="Number of Units Distribution",
+    )
+
+    st.plotly_chart(fig, use_container_width=False)
+
+    # fig = px.pie(filtered, values="tUNITS", names="building_type")
+
     # Display the filtered DataFrame
-    st.dataframe(filtered)
+    # st.dataframe(filtered)
 
     # Create and display the map
     st.header("Building Map")
