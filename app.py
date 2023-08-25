@@ -89,8 +89,11 @@ def main() -> None:
         filtered_counts,
         values=filtered_counts,
         names=filtered_counts.index,
-        title="Building Type Proportions",
+        # title="Building Type Proportions",
     )
+
+    fig.update_traces(textposition='inside')
+    fig.update_layout(uniformtext_minsize=12, uniformtext_mode='hide')
 
     st.plotly_chart(fig, use_container_width=False)
 
@@ -102,8 +105,11 @@ def main() -> None:
         unit_distribution,
         values=unit_distribution,
         names=unit_distribution.index,
-        title="Number of Units Distribution",
+        # title="Number of Units Distribution",
     )
+
+    fig.update_traces(textposition='inside')
+    fig.update_layout(uniformtext_minsize=12, uniformtext_mode='hide')
 
     st.plotly_chart(fig, use_container_width=False)
 
